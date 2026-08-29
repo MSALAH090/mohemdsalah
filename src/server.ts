@@ -44,11 +44,19 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+import { pendingDbWrites } from "./lib/firebase-engine";
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
+
+      // Await all pending database writes to complete before the serverless container suspends
+      if (pendingDbWrites.size > 0) {
+        await Promise.all(Array.from(pendingDbWrites));
+      }
+
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);

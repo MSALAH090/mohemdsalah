@@ -53,8 +53,15 @@ function notifyLocal(id: string, t: TournamentRow | null) {
   localListeners.get(id)?.forEach((cb) => cb(t));
 }
 
+import { pendingDbWrites } from "./firebase-engine";
+
 function syncDb(p: Promise<unknown>) {
-  p.catch(() => {});
+  pendingDbWrites.add(p);
+  p.catch((err) => {
+    console.error("❌ Tournament Firestore Sync Error:", err);
+  }).finally(() => {
+    pendingDbWrites.delete(p);
+  });
 }
 
 // ─── Fetch Tournament ─────────────────────────────────────────────────────
