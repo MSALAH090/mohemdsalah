@@ -53,7 +53,7 @@ function notifyLocal(id: string, t: TournamentRow | null) {
   localListeners.get(id)?.forEach((cb) => cb(t));
 }
 
-import { pendingDbWrites } from "./firebase-engine";
+import { pendingDbWrites, sanitizeForFirestore } from "./firebase-engine";
 
 function syncDb(p: Promise<unknown>) {
   pendingDbWrites.add(p);
@@ -66,19 +66,27 @@ function syncDb(p: Promise<unknown>) {
 
 // ─── Fetch Tournament ─────────────────────────────────────────────────────
 async function fetchTournament(id: string): Promise<TournamentRow> {
+  try {
+    const snap = await getDoc(doc(db, "tournaments", id));
+    if (snap.exists()) {
+      const t = snap.data() as TournamentRow;
+      memTournaments.set(id, t);
+      return t;
+    }
+  } catch (_e) {
+    // Fallback to memory if offline
+  }
+
   const mem = memTournaments.get(id);
   if (mem) return mem;
-  const snap = await getDoc(doc(db, "tournaments", id));
-  if (!snap.exists()) throw new Error("الدوري غير موجود");
-  const t = snap.data() as TournamentRow;
-  memTournaments.set(id, t);
-  return t;
+
+  throw new Error("الدوري غير موجود");
 }
 
 function saveT(t: TournamentRow) {
   memTournaments.set(t.id, t);
   notifyLocal(t.id, t);
-  syncDb(setDoc(doc(db, "tournaments", t.id), t));
+  syncDb(setDoc(doc(db, "tournaments", t.id), sanitizeForFirestore(t)));
 }
 
 // ─── Realtime Subscription ────────────────────────────────────────────────

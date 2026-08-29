@@ -47,15 +47,42 @@ function pick<T>(arr: T[]): T {
 }
 
 /**
- * Strip any undefined fields from a Player before writing to Firestore.
+/**
+ * Recursively strip any undefined fields from objects/arrays before writing to Firestore.
  * Firestore rejects documents containing undefined values.
  */
-function sanitizePlayer(player: Player): Player {
-  const cleaned: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(player)) {
-    if (v !== undefined) cleaned[k] = v;
+export function sanitizeForFirestore<T>(val: T): T {
+  if (val === undefined) {
+    return null as unknown as T;
   }
-  return cleaned as unknown as Player;
+  if (val === null) {
+    return null as unknown as T;
+  }
+  if (Array.isArray(val)) {
+    return val.map((item) => sanitizeForFirestore(item)) as unknown as T;
+  }
+  if (typeof val === "object" && !(val instanceof Date)) {
+    const res: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(val as Record<string, unknown>)) {
+      if (v !== undefined) {
+        res[k] = sanitizeForFirestore(v);
+      }
+    }
+    return res as unknown as T;
+  }
+  return val;
+}
+
+export function safeSetDoc(docRef: any, data: any) {
+  return setDoc(docRef, sanitizeForFirestore(data));
+}
+
+export function safeUpdateDoc(docRef: any, data: any) {
+  return updateDoc(docRef, sanitizeForFirestore(data));
+}
+
+function sanitizePlayer(player: Player): Player {
+  return sanitizeForFirestore(player);
 }
 
 // -------------------------------------------------------------
@@ -64,6 +91,8 @@ function sanitizePlayer(player: Player): Player {
 const memRooms = new Map<string, RoomRow>();
 const memPrivate = new Map<string, Record<string, unknown>>();
 const localListeners = new Map<string, Set<(r: RoomRow | null) => void>>();
+
+export const pendingDbWrites = new Set<Promise<any>>();
 
 function notifyLocal(code: string, r: RoomRow | null) {
   const listeners = localListeners.get(code.toUpperCase());
@@ -127,7 +156,6 @@ export function subscribeToRoom(
 
 export async function fetchRoom(code: string): Promise<RoomRow> {
   const normCode = code.toUpperCase();
-  if (memRooms.has(normCode)) return memRooms.get(normCode)!;
 
   try {
     const snap = await getDoc(doc(db, "rooms", normCode));
@@ -137,8 +165,10 @@ export async function fetchRoom(code: string): Promise<RoomRow> {
       return d;
     }
   } catch (_e) {
-    // Firestore offline fallback
+    // Fallback to in-memory store if Firestore is offline
   }
+
+  if (memRooms.has(normCode)) return memRooms.get(normCode)!;
 
   throw new Error("الغرفة غير موجودة");
 }
@@ -153,8 +183,11 @@ export function getSeat(room: RoomRow, playerId: string): Seat {
 // Matchmaking & Room Setup
 // -------------------------------------------------------------
 function syncDb(p: Promise<any>) {
+  pendingDbWrites.add(p);
   p.catch((err) => {
     console.error("❌ Firestore Sync Error:", err);
+  }).finally(() => {
+    pendingDbWrites.delete(p);
   });
 }
 
@@ -200,7 +233,7 @@ export async function createRoomFb(
     notifyLocal(code, initData);
 
     const roomRef = doc(db, "rooms", code);
-    syncDb(setDoc(roomRef, initData));
+    syncDb(safeSetDoc(roomRef, initData));
 
     return { code };
   }
@@ -225,7 +258,7 @@ export async function joinRoomFb(
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     guest_id: playerId,
     guest_name: name,
   }));
@@ -319,7 +352,7 @@ export async function createBotRoomFb(
   memRooms.set(code, initData);
   notifyLocal(code, initData);
 
-  syncDb(setDoc(doc(db, "rooms", code), initData));
+  syncDb(safeSetDoc(doc(db, "rooms", code), initData));
 
   await beginRoundFb(initData, 1);
   if (auctionType !== "live") {
@@ -379,7 +412,7 @@ export async function beginRoundFb(room: RoomRow, round: number) {
   const privKey = `${room.code}__${round}`;
   memPrivate.set(privKey, { sub_player: sub, bid_host: null, bid_guest: null });
 
-  syncDb(setDoc(doc(db, "rooms", room.code, "private", String(round)), {
+  syncDb(safeSetDoc(doc(db, "rooms", room.code, "private", String(round)), {
     sub_player: sanitizePlayer(sub),
     bid_host: null,
     bid_guest: null,
@@ -417,7 +450,7 @@ export async function beginRoundFb(room: RoomRow, round: number) {
   memRooms.set(room.code, updated);
   notifyLocal(room.code, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", room.code), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", room.code), {
     state: "auction",
     phase: "bidding",
     round,
@@ -471,7 +504,7 @@ export async function submitBidFb(code: string, playerId: string, amount: number
   memPrivate.set(privKey, curPriv);
 
   const privRef = doc(db, "rooms", normCode, "private", String(room.round));
-  syncDb(updateDoc(privRef, {
+  syncDb(safeUpdateDoc(privRef, {
     [seat === "host" ? "bid_host" : "bid_guest"]: finalBid,
   }));
 
@@ -480,7 +513,7 @@ export async function submitBidFb(code: string, playerId: string, amount: number
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     submitted: nextSubmitted,
   }));
 
@@ -546,7 +579,7 @@ export async function liveBidFb(code: string, playerId: string, amount: number) 
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     live_bids: nextLiveBids,
   }));
 
@@ -607,7 +640,7 @@ export async function passBidFb(code: string, playerId: string) {
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     live_bids: nextLiveBids,
   }));
 
@@ -874,7 +907,7 @@ export async function resolveRoundFb(code: string) {
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     phase: "reveal",
     reveal,
     squads,
@@ -901,7 +934,7 @@ export async function nextRoundFb(code: string, playerId: string) {
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       state: "formation",
       phase: "formation",
     }));
@@ -946,7 +979,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -989,7 +1022,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1006,7 +1039,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1023,7 +1056,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1071,7 +1104,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       squads,
       powers: nextPowers,
       reveal,
@@ -1092,7 +1125,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       [budgetKey]: newBudget,
     }));
@@ -1109,7 +1142,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1126,7 +1159,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1143,7 +1176,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1160,7 +1193,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1177,7 +1210,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1194,7 +1227,7 @@ export async function usePowerFb(
     memRooms.set(normCode, updated);
     notifyLocal(normCode, updated);
 
-    syncDb(updateDoc(doc(db, "rooms", normCode), {
+    syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
       powers: nextPowers,
       round_event: updatedEvent,
     }));
@@ -1220,7 +1253,7 @@ export async function setFormationFb(
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     [`formation.${seat}`]: spots,
   }));
 }
@@ -1241,7 +1274,7 @@ export async function setTacticFb(
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     [`tactics.${seat}`]: tactic,
   }));
 }
@@ -1263,7 +1296,7 @@ export async function setPlayStyleFb(
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     [`tactics.${key}`]: style,
   }));
 }
@@ -1285,7 +1318,7 @@ export async function startMatchFb(code: string, playerId: string) {
   memRooms.set(normCode, updated);
   notifyLocal(normCode, updated);
 
-  syncDb(updateDoc(doc(db, "rooms", normCode), {
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), {
     state: "finished",
     phase: "match",
     match,
@@ -1319,7 +1352,7 @@ export async function rematchFb(code: string, playerId: string) {
   notifyLocal(normCode, updated);
 
   syncDb(deleteDoc(doc(db, "rooms", normCode, "private", "1")));
-  syncDb(updateDoc(doc(db, "rooms", normCode), resetData));
+  syncDb(safeUpdateDoc(doc(db, "rooms", normCode), resetData));
 
   await beginRoundFb(updated, 1);
 }
