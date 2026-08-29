@@ -1,0 +1,524 @@
+{
+  "messi": {
+    "fotmobId": "30981"
+  },
+  "ronaldo": {
+    "fotmobId": "30893"
+  },
+  "mbappe": {
+    "fotmobId": "701154"
+  },
+  "haaland": {
+    "fotmobId": "737066"
+  },
+  "vini": {
+    "fotmobId": "846033"
+  },
+  "bellingham": {
+    "fotmobId": "1077894"
+  },
+  "salah": {
+    "fotmobId": "292462"
+  },
+  "debruyne": {
+    "fotmobId": "169200"
+  },
+  "kane": {
+    "fotmobId": "194165"
+  },
+  "lewa": {
+    "fotmobId": "93447"
+  },
+  "rodri": {
+    "fotmobId": "675088"
+  },
+  "valverde": {
+    "fotmobId": "743533"
+  },
+  "pedri": {
+    "fotmobId": "1083323"
+  },
+  "gavi": {
+    "fotmobId": "1279040"
+  },
+  "wirtz": {
+    "fotmobId": "1152455"
+  },
+  "musiala": {
+    "fotmobId": "1156141"
+  },
+  "odegaard": {
+    "fotmobId": "534670"
+  },
+  "kimmich": {
+    "fotmobId": "460632"
+  },
+  "modric": {
+    "fotmobId": "31097"
+  },
+  "fdj": {
+    "fotmobId": "638622"
+  },
+  "bruno": {
+    "fotmobId": "422685"
+  },
+  "saka": {
+    "fotmobId": "961995"
+  },
+  "foden": {
+    "fotmobId": "815006"
+  },
+  "rapha": {
+    "fotmobId": "696679"
+  },
+  "yamal": {
+    "fotmobId": "1467236"
+  },
+  "leao": {
+    "fotmobId": "848844"
+  },
+  "kvara": {
+    "fotmobId": "900433"
+  },
+  "doku": {
+    "fotmobId": "942368"
+  },
+  "nico": {
+    "fotmobId": "1202110"
+  },
+  "olise": {
+    "fotmobId": "1029063"
+  },
+  "dembele": {
+    "fotmobId": "692984"
+  },
+  "griez": {
+    "fotmobId": "184138"
+  },
+  "osimhen": {
+    "fotmobId": "687681"
+  },
+  "vlahovic": {
+    "fotmobId": "737857"
+  },
+  "gyokeres": {
+    "fotmobId": "664500"
+  },
+  "isak": {
+    "fotmobId": "690107"
+  },
+  "martinez_l": {
+    "fotmobId": "690230"
+  },
+  "nunez": {
+    "fotmobId": "950561"
+  },
+  "benzema": {
+    "fotmobId": "26166"
+  },
+  "mitrovic": {
+    "fotmobId": "351860"
+  },
+  "vandijk": {
+    "fotmobId": "209405"
+  },
+  "dias": {
+    "fotmobId": "614006"
+  },
+  "saliba": {
+    "fotmobId": "955406"
+  },
+  "saliba2": {
+    "fotmobId": "955406"
+  },
+  "hernandez": {
+    "fotmobId": "724371"
+  },
+  "bastoni": {
+    "fotmobId": "805451"
+  },
+  "hakimi": {
+    "fotmobId": "770881"
+  },
+  "cubarsi": {
+    "fotmobId": "1532137"
+  },
+  "marquinhos": {
+    "fotmobId": "267365"
+  },
+  "rudiger": {
+    "fotmobId": "276738"
+  },
+  "carvajal": {
+    "fotmobId": "282674"
+  },
+  "taa": {
+    "fotmobId": "760712"
+  },
+  "gvardiol": {
+    "fotmobId": "1070712"
+  },
+  "militao": {
+    "fotmobId": "844415"
+  },
+  "kounde": {
+    "fotmobId": "705450"
+  },
+  "romero": {
+    "fotmobId": "789066"
+  },
+  "alba": {
+    "fotmobId": "150739"
+  },
+  "courtois": {
+    "fotmobId": "170323"
+  },
+  "alisson": {
+    "fotmobId": "319784"
+  },
+  "donnarumma": {
+    "fotmobId": "618878"
+  },
+  "neuer": {
+    "fotmobId": "27299"
+  },
+  "maignan": {
+    "fotmobId": "466439"
+  },
+  "raya": {
+    "fotmobId": "562727"
+  },
+  "oblak": {
+    "fotmobId": "177126"
+  },
+  "bounou": {
+    "fotmobId": "340020"
+  },
+  "elshenawy": {
+    "fotmobId": "546550"
+  },
+  "palmer": {
+    "fotmobId": "1096353"
+  },
+  "rice": {
+    "fotmobId": "654096"
+  },
+  "mainoo": {
+    "fotmobId": "1292810"
+  },
+  "zubimendi": {
+    "fotmobId": "1031325"
+  },
+  "tchouameni": {
+    "fotmobId": "914458"
+  },
+  "camavinga": {
+    "fotmobId": "1015185"
+  },
+  "barella": {
+    "fotmobId": "541820"
+  },
+  "szoboszlai": {
+    "fotmobId": "846005"
+  },
+  "mac_allister": {
+    "fotmobId": "831489"
+  },
+  "konate": {
+    "fotmobId": "820140"
+  },
+  "martinez_e": {
+    "fotmobId": "268375"
+  },
+  "sommer": {
+    "fotmobId": "41618"
+  },
+  "diogo": {
+    "fotmobId": "795630"
+  },
+  "huijsen": {
+    "fotmobId": "1367619"
+  },
+  "guehi": {
+    "fotmobId": "844425"
+  },
+  "dumfries": {
+    "fotmobId": "593118"
+  },
+  "theo2": {
+    "fotmobId": "724371"
+  },
+  "sesko": {
+    "fotmobId": "1073977"
+  },
+  "zirkzee": {
+    "fotmobId": "950830"
+  },
+  "retegui": {
+    "fotmobId": "905546"
+  },
+  "david": {
+    "fotmobId": "939569"
+  },
+  "openda": {
+    "fotmobId": "747767"
+  },
+  "marmoush": {
+    "fotmobId": "839204"
+  },
+  "kudus": {
+    "fotmobId": "891743"
+  },
+  "mudryk": {
+    "fotmobId": "976506"
+  },
+  "garnacho": {
+    "fotmobId": "1203665"
+  },
+  "rodrygo": {
+    "fotmobId": "895362"
+  },
+  "cherki": {
+    "fotmobId": "1104053"
+  },
+  "diaz_l": {
+    "fotmobId": "860914"
+  },
+  "nkunku": {
+    "fotmobId": "704523"
+  },
+  "ederson": {
+    "fotmobId": "957203"
+  },
+  "lunin": {
+    "fotmobId": "800882"
+  },
+  "onana": {
+    "fotmobId": "611491"
+  },
+  "mamardashvili": {
+    "fotmobId": "948800"
+  },
+  "vicario": {
+    "fotmobId": "538501"
+  },
+  "trubin": {
+    "fotmobId": "1022350"
+  },
+  "kobel": {
+    "fotmobId": "764018"
+  },
+  "nuno_mendes": {
+    "fotmobId": "1158945"
+  },
+  "van_de_ven": {
+    "fotmobId": "1097466"
+  },
+  "araujo": {
+    "fotmobId": "921253"
+  },
+  "kim_minjae": {
+    "fotmobId": "1861850"
+  },
+  "upamecano": {
+    "fotmobId": "658554"
+  },
+  "calafiori": {
+    "fotmobId": "1105912"
+  },
+  "gabriel": {
+    "fotmobId": "1785055"
+  },
+  "stones": {
+    "fotmobId": "263653"
+  },
+  "de_ligt": {
+    "fotmobId": "769895"
+  },
+  "bremer": {
+    "fotmobId": "857269"
+  },
+  "dimarco": {
+    "fotmobId": "605224"
+  },
+  "frattesi": {
+    "fotmobId": "815431"
+  },
+  "vitinha": {
+    "fotmobId": "1061249"
+  },
+  "joao_neves": {
+    "fotmobId": "1342757"
+  },
+  "enzo": {
+    "fotmobId": "1137705"
+  },
+  "caicedo": {
+    "fotmobId": "1137668"
+  },
+  "bernardo": {
+    "fotmobId": "488139"
+  },
+  "gundogan": {
+    "fotmobId": "178818"
+  },
+  "locatelli": {
+    "fotmobId": "624166"
+  },
+  "depaul": {
+    "fotmobId": "324578"
+  },
+  "xavi_simons": {
+    "fotmobId": "1173787"
+  },
+  "doue": {
+    "fotmobId": "1339208"
+  },
+  "barcola": {
+    "fotmobId": "1297165"
+  },
+  "kubo": {
+    "fotmobId": "848289"
+  },
+  "mitoma": {
+    "fotmobId": "862608"
+  },
+  "sancho": {
+    "fotmobId": "846381"
+  },
+  "coman": {
+    "fotmobId": "429265"
+  },
+  "chiesa": {
+    "fotmobId": "784510"
+  },
+  "savinho": {
+    "fotmobId": "1174337"
+  },
+  "julian": {
+    "fotmobId": "974753"
+  },
+  "thuram": {
+    "fotmobId": "621562"
+  },
+  "hojlund": {
+    "fotmobId": "1199272"
+  },
+  "boniface": {
+    "fotmobId": "1035208"
+  },
+  "watkins": {
+    "fotmobId": "540088"
+  },
+  "solanke": {
+    "fotmobId": "591734"
+  },
+  "endrick": {
+    "fotmobId": "1406729"
+  },
+  "duran": {
+    "fotmobId": "1088066"
+  },
+  "neymar": {
+    "fotmobId": "19533"
+  },
+  "hamdallah": {
+    "fotmobId": "422288"
+  },
+  "kanno": {
+    "fotmobId": "866373"
+  },
+  "alshehri": {
+    "fotmobId": "384407"
+  },
+  "trezeguet": {
+    "fotmobId": "513492"
+  },
+  "mostafa": {
+    "fotmobId": "817500"
+  },
+  "msakni": {
+    "fotmobId": "192134"
+  },
+  "bennasser": {
+    "fotmobId": "609624"
+  },
+  "bouali": {
+    "fotmobId": "525489"
+  },
+  "alowais": {
+    "fotmobId": "535669"
+  },
+  "hamed": {
+    "fotmobId": "525471"
+  },
+  "hakim": {
+    "fotmobId": "360559"
+  },
+  "amrabat": {
+    "fotmobId": "593116"
+  },
+  "elneny": {
+    "fotmobId": "339992"
+  },
+  "hegazy": {
+    "fotmobId": "297556"
+  },
+  "marcelo": {
+    "fotmobId": "1897624"
+  },
+  "dani": {
+    "fotmobId": "33988"
+  },
+  "akram": {
+    "fotmobId": "613792"
+  },
+  "moanes": {
+    "fotmobId": "289472"
+  },
+  "rookie_gk": {
+    "fotmobId": "1228546"
+  },
+  "rookie_def": {
+    "fotmobId": "670885"
+  },
+  "rookie_mid": {
+    "fotmobId": "307753"
+  },
+  "rookie_wing": {
+    "fotmobId": "278343"
+  },
+  "rookie_st": {
+    "fotmobId": "844226"
+  },
+  "buffon": {
+    "fotmobId": "30717"
+  },
+  "iniesta": {
+    "fotmobId": "30955"
+  },
+  "pirlo": {
+    "fotmobId": "1174702"
+  },
+  "ramos": {
+    "fotmobId": "30962"
+  },
+  "ibra": {
+    "fotmobId": "35724"
+  },
+  "aguero": {
+    "fotmobId": "37412"
+  },
+  "robben": {
+    "fotmobId": "30834"
+  },
+  "ribery": {
+    "fotmobId": "30924"
+  },
+  "bale": {
+    "fotmobId": "31921"
+  },
+  "hazard": {
+    "fotmobId": "107417"
+  }
+}
