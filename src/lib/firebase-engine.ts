@@ -153,7 +153,9 @@ export function getSeat(room: RoomRow, playerId: string): Seat {
 // Matchmaking & Room Setup
 // -------------------------------------------------------------
 function syncDb(p: Promise<any>) {
-  p.catch(() => {});
+  p.catch((err) => {
+    console.error("❌ Firestore Sync Error:", err);
+  });
 }
 
 export async function createRoomFb(
