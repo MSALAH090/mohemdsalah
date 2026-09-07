@@ -1,0 +1,61 @@
+# ========================================
+# Vercel Ignore - لتقليل حجم الـ Deployment
+# ========================================
+
+# ❌ لا ترفع مجلدات Mobile (كبيرة جداً!)
+ios/
+android/
+
+# ❌ Documentation files (غير مطلوبة في Production)
+*.md
+!README.md
+SECURITY_FIXES.md
+SERVER_SIDE_EXAMPLE.md
+README_ADMOB_FIXES.md
+QUICK_SECURITY_SUMMARY.md
+START_HERE.md
+ADMOB_USAGE_GUIDE.md
+FIXES_APPLIED.md
+.security-checklist.md
+
+# ❌ Test & Development files
+test-admob-types.ts
+scratch_*.json
+scratch_*.cjs
+generate_complete_players.py
+
+# ❌ Supabase migrations (يتم deploy منفصل)
+supabase/
+
+# ❌ Build artifacts (سيتم إعادة build)
+dist/
+.output/
+
+# ❌ Node modules
+node_modules/
+
+# ❌ Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ❌ Cache
+.cache/
+.temp/
+.tmp/
+
+# ❌ IDE configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ❌ Environment files (sensitive)
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ✅ فقط ملفات السورس كود + public assets مطلوبة
